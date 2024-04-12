@@ -8,21 +8,18 @@ import java.util.HashMap;
 
 public class DictionaryManager {
 
-    /**
-     * A method to retrieve and parse a dictionary from a JSON file.
-     *
-     * @return the parsed dictionary as a HashMap
-     */
+
     public static HashMap<String, Integer> getDictionary() {
-        HashMap<String, Integer> dictionaryHashMap = new HashMap<String, Integer>();
+        HashMap<String, Integer> dictionaryHashMap = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         try {
             byte[] jsonData = Files.readAllBytes(Paths.get("src/words_dict.json"));
             // Convert JSON to HashMap
-            dictionaryHashMap = mapper.readValue(jsonData, new TypeReference<HashMap<String, Integer>>() {
+            dictionaryHashMap = mapper.readValue(jsonData, new TypeReference<>() {
             });
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Could not read dictionary file");
         }
         return dictionaryHashMap;
     }
