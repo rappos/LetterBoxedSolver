@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -10,44 +9,61 @@ public class Main {
 
         HashMap<String, Integer> dictionaryHashMap = DictionaryManager.getDictionary();
 
-        System.out.println("\t1 2 3 \n 12      4\n 11      5\n 10      6\n\t9 8 7");
-
         // Array of letters
-        Letter[] letters = getLetters(scanner);
+        String[] letters = getLetters(scanner);
 
-        // Map for used/unused letters
-        HashMap<String, Boolean> usedLetters = new HashMap<>();
-        for (Letter letter : letters) {
-            usedLetters.put(letter.getLetter(), false);
-        }
+        // Filter dictionary according to the rules
+        filterDictionary(letters, dictionaryHashMap);
 
-        // Make list of possible words
-        List<String> possibleWords = fillPossibleWords(letters);
 
     }
 
-    private static Letter[] getLetters(Scanner scanner) {
+    private static void filterDictionary(String[] letters, HashMap<String, Integer> dictionaryHashMap) {
+        // Make unallowed letter combos
+        ArrayList<String> unallowedCombinations = getUnallowedCombos(letters);
+
+        //Filter out words with any letter that aren't in the letters array
+        dictionaryHashMap.keySet()
+                .removeIf(word -> Arrays.stream(word.split(""))
+                        .anyMatch(letter -> !Arrays.asList(letters).contains(letter)));
+
+        // Filter out words shorter than 3 letters
+        dictionaryHashMap.keySet()
+                .removeIf(word -> word.length() < 3);
+
+        //Filter out words if it contains any of the unallowed letter combos
+        dictionaryHashMap.keySet().removeIf(key -> {
+            for (String unallowedCombo : unallowedCombinations) {
+                if (key.contains(unallowedCombo)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+    private static ArrayList<String> getUnallowedCombos(String[] letters) {
+        ArrayList<String> unallowedCombinations = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            int j = i * 3;
+            for (int k = 0; k < 3; k++) {
+                unallowedCombinations.add(letters[j + k] + letters[j]);
+                unallowedCombinations.add(letters[j + k] + letters[j + 1]);
+                unallowedCombinations.add(letters[j + k] + letters[j + 2]);
+            }
+        }
+        return unallowedCombinations;
+    }
+
+    private static String[] getLetters(Scanner scanner) {
         String[] letters;
         do {
-            System.out.println("Input the 12 letters in this order, separated by spaces:");
+            System.out.println("Input the 12 letters of the puzzle:");
             System.out.print("Letters: ");
-            letters = scanner.nextLine().strip().split(" ");
+            letters = scanner.nextLine().strip().split("");
         } while (letters.length != 12 || Arrays.stream(letters).anyMatch(s -> s.length() != 1));
-
-        Letter[] lettersArray = new Letter[letters.length];
-        for (int i = 0; i < letters.length; i++) {
-            lettersArray[i] = new Letter(letters[i], i / 3);
-        }
-        return lettersArray;
+        return letters;
     }
 
-    private static List<String> fillPossibleWords(Letter[] letters) {
-        int shortestWordLength = 3, longestWordLength = 12;
-        List<String> possibleWords = new ArrayList<>();
-        for (Letter letter : letters) {
-            String currentWord = letter.getLetter();
-        }
 
-        return possibleWords;
-    }
 }
