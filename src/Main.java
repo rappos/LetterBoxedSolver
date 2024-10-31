@@ -16,6 +16,21 @@ public class Main {
         filterDictionary(letters, dictionaryHashMap);
 
 
+        // Make a list of allowed words
+        ArrayList<String> allowedWords = new ArrayList<>(dictionaryHashMap.keySet());
+
+        // Ask about max number of words
+        System.out.print("Max number of words: ");
+        int maxWords = scanner.nextInt();
+        ArrayList<ArrayList<String>> solutions = new ArrayList<>();
+        // Add all words once
+        ArrayList<String> innerList;
+        for (String word : allowedWords) {
+            innerList = new ArrayList<>();
+            innerList.add(word);
+            solutions.add(innerList);
+        }
+
     }
 
     private static void filterDictionary(String[] letters, HashMap<String, Integer> dictionaryHashMap) {
